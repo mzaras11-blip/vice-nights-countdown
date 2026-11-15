@@ -15,7 +15,9 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-9461680459080238~5594356343</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -24,6 +26,8 @@
 	<string>GTA6 News adds the launch-night event to your calendar when you tap Add to Calendar.</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>GTA6 News adds the launch-night event to your calendar when you tap Add to Calendar.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>We use your device's advertising identifier to show you ads that are more relevant to you. If you choose not to allow tracking, you'll still see ads — they just won't be personalized.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

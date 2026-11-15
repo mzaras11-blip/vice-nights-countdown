@@ -3,7 +3,7 @@
 - **Name:** GTA6 News
 - **Subtitle:** Launch Night Timer
 - **Bundle ID:** com.swishgame.vicenights
-- **Version:** 1.0 (build 2)
+- **Version:** 1.0 (build 4)
 - **Primary category:** Entertainment
 - **Secondary category:** Utilities
 
@@ -28,7 +28,8 @@ FEATURES
 • One-tap "Add Launch Night to Calendar" so you never miss the moment
 • Launch night facts and a get-ready checklist (charge the controller, clear the schedule, stock the snacks)
 • A launch-night celebration the second the timer hits zero
-• Works fully offline — the whole show is built into the app
+• After launch, the timer counts UP — see exactly how long the game has been out, with Day 1, Week 1 and Month 1 milestones
+• The countdown itself works fully offline — the whole show is built into the app (the news feed and ads load when you're connected)
 
 GTA6 News is an unofficial, fan-made app. It is not affiliated with, endorsed by, or connected to any game publisher or developer.
 
@@ -39,7 +40,7 @@ countdown,timer,launch night,release date,midnight,neon,sunset,palms,hype,calend
 ## Support / Marketing Notes
 
 - Support URL: (set when the support page is published)
-- Privacy: the app collects no data and shows no ads. Its only network call fetches a public headlines file (no user data is sent). Calendar access is used only when the user taps "Add Launch Night to Calendar."
+- Privacy: the app shows ads via Google AdMob (a banner and native ads in the news feed) and asks for tracking permission through Apple's App Tracking Transparency prompt; ad-related data handling matches Michael's other ARCADE apps (the Google Mobile Ads SDK collects device/advertising data as declared in its own privacy manifest). The app itself collects no user data: its only other network call fetches a public headlines file (no user data is sent). Calendar access is used only when the user taps "Add Launch Night to Calendar."
 
 ## Screenshot Captions
 

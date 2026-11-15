@@ -86,6 +86,7 @@ final class CalendarBridge: NSObject, WKScriptMessageHandler {
 final class WebCoordinator: NSObject {
     let haptics = HapticsBridge()
     let calendar = CalendarBridge()
+    let ads = AdsBridge()
 }
 
 /// Full-screen web view hosting the bundled countdown page at web/index.html.
@@ -99,6 +100,7 @@ struct WebView: UIViewRepresentable {
         config.mediaTypesRequiringUserActionForPlayback = []
         config.userContentController.add(context.coordinator.haptics, name: "haptics")
         config.userContentController.add(context.coordinator.calendar, name: "calendar")
+        config.userContentController.add(context.coordinator.ads, name: "ads")
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.scrollView.bounces = false
@@ -112,6 +114,8 @@ struct WebView: UIViewRepresentable {
             // Bundled copy — works fully offline.
             webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
         }
+        // The native feed-ad overlay tracks this web view's frame.
+        AdManager.shared.attachFeedOverlay(to: webView)
         return webView
     }
 
@@ -120,23 +124,50 @@ struct WebView: UIViewRepresentable {
 
 /// Root layout. The web view fills the screen over the app's neon-night
 /// gradient, so no gap can ever show a plain white window background
-/// while the page loads.
+/// while the page loads. While a real banner ad is on screen the web
+/// view lifts by the banner's height so the ad strip sits below the app
+/// content (same layout as the SWISH shell) — and the strip only exists
+/// once an ad has actually loaded.
 struct RootView: View {
+    @ObservedObject private var adManager = AdManager.shared
+
     var body: some View {
-        WebView()
-            .ignoresSafeArea()
-            .background(
-                LinearGradient(
-                    colors: [Color(red: 0.09, green: 0.03, blue: 0.16),
-                             Color(red: 0.16, green: 0.05, blue: 0.24),
-                             Color(red: 0.05, green: 0.02, blue: 0.09)],
-                    startPoint: .top, endPoint: .bottom)
-            )
+        ZStack(alignment: .bottom) {
+            WebView()
+                .ignoresSafeArea()
+                .padding(.bottom, adManager.bannerLoaded ? 50 : 0)
+                .animation(.easeInOut(duration: 0.25), value: adManager.bannerLoaded)
+            #if canImport(GoogleMobileAds)
+            // Always in the hierarchy so the banner can load; it only
+            // takes space (and becomes visible) once a real ad arrives.
+            BannerAdView()
+                .frame(height: adManager.bannerLoaded ? 50 : 0)
+                .opacity(adManager.bannerLoaded ? 1 : 0)
+                .allowsHitTesting(adManager.bannerLoaded)
+                .clipped()
+            #endif
+        }
+        .ignoresSafeArea(edges: .bottom)
+        .background(
+            LinearGradient(
+                colors: [Color(red: 0.09, green: 0.03, blue: 0.16),
+                         Color(red: 0.16, green: 0.05, blue: 0.24),
+                         Color(red: 0.05, green: 0.02, blue: 0.09)],
+                startPoint: .top, endPoint: .bottom)
+        )
     }
 }
 
 @main
 struct ViceNightsApp: App {
+    init() {
+        // Ads start only after the App Tracking Transparency decision
+        // (Guideline 5.1.2(i)): AdManager presents the ATT request
+        // first, then starts the Google Mobile Ads SDK and loads the
+        // first banner + feed ads.
+        AdManager.shared.beginAdFlow()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

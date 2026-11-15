@@ -9,17 +9,21 @@
 		VN01B00000000000000000A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A2 /* Assets.xcassets */; };
 		VN01B00000000000000000A3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A3 /* PrivacyInfo.xcprivacy */; };
 		VN01B00000000000000000A4 /* web in Resources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A4 /* web */; };
+		VN01B00000000000000000A5 /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A6 /* AdManager.swift */; };
+		VN01B00000000000000000A6 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = VN01D00000000000000000A1 /* GoogleMobileAds */; };
 		VN01F00000000000000000A0 /* ViceNights.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViceNights.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		VN01F00000000000000000A1 /* ViceNightsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViceNightsApp.swift; sourceTree = "<group>"; };
 		VN01F00000000000000000A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		VN01F00000000000000000A3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		VN01F00000000000000000A4 /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/web; sourceTree = "<group>"; };
 		VN01F00000000000000000A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		VN01F00000000000000000A6 /* AdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManager.swift; sourceTree = "<group>"; };
 		VN01P00000000000000000A1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				VN01B00000000000000000A1 /* ViceNightsApp.swift in Sources */,
+				VN01B00000000000000000A5 /* AdManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				VN01B00000000000000000A6 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				VN01F00000000000000000A1 /* ViceNightsApp.swift */,
+				VN01F00000000000000000A6 /* AdManager.swift */,
 				VN01F00000000000000000A5 /* Info.plist */,
 				VN01F00000000000000000A2 /* Assets.xcassets */,
 				VN01F00000000000000000A3 /* PrivacyInfo.xcprivacy */,
@@ -81,6 +87,9 @@
 			dependencies = (
 			);
 			name = ViceNights;
+			packageProductDependencies = (
+				VN01D00000000000000000A1 /* GoogleMobileAds */,
+			);
 			productName = ViceNights;
 			productReference = VN01F00000000000000000A0 /* ViceNights.app */;
 			productType = "com.apple.product-type.application";
@@ -98,12 +107,28 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (en);
 			mainGroup = VN01G00000000000000000A0;
+			packageReferences = (
+				VN01R00000000000000000A1 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = VN01G00000000000000000A2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				VN01T00000000000000000A1 /* ViceNights */,
 			);
+		};
+		VN01R00000000000000000A1 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+		VN01D00000000000000000A1 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = VN01R00000000000000000A1 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		VN01L00000000000000000A1 /* Build configuration list for PBXProject */ = {
 			isa = XCConfigurationList;

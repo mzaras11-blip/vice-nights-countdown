@@ -249,6 +249,21 @@
   .news-card p{ margin:0; color:var(--muted); font-size:14.5px }
   .news-note{ margin-top:12px; font-size:12.5px; color:var(--muted2) }
 
+  /* Feed ad placeholders: the native shell overlays a real AdMob native
+     ad on each one. Hidden until the shell confirms ads are loaded, so
+     on plain web (or with no fill) the feed looks untouched. */
+  .news-ad-slot{
+    display:none; height:264px; border-radius:18px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    align-items:center; justify-content:center;
+  }
+  .news-ad-slot.live{ display:flex }
+  .news-ad-slot span{
+    font-size:11px; font-weight:800; letter-spacing:.28em;
+    text-transform:uppercase; color:var(--muted2);
+  }
+
   .actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:20px }
   .btn{
     appearance:none; border:0; cursor:pointer; text-decoration:none;
@@ -656,6 +671,65 @@
 ];
   var newsList = el("newsList"), newsNote = el("newsNote");
 
+  /* ---------- Feed ads (native AdMob, placed by the shell) ----------
+     A placeholder slot goes in after every 5 news cards. The native
+     shell loads native ads, calls window.onNativeAdsReady(count) with
+     how many it actually has, and overlays a real ad view on each
+     surviving slot; this page keeps the shell posted with the slots'
+     viewport rects as they move. Without the shell (plain web) the
+     slots never appear. */
+  var adSlots = [];
+  var nativeAdsReady = -1; // -1 = shell has not answered yet
+  var adsBridge = (window.webkit && window.webkit.messageHandlers &&
+                   window.webkit.messageHandlers.ads) || null;
+
+  function reportAdSlots(){
+    if (!adsBridge) return;
+    var out = [];
+    for (var i = 0; i < adSlots.length; i++) {
+      var s = adSlots[i];
+      if (!s.classList || !s.classList.contains("live")) continue;
+      if (!s.getBoundingClientRect) continue;
+      var r = s.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      out.push({ id: i, x: Math.round(r.left), y: Math.round(r.top),
+                 w: Math.round(r.width), h: Math.round(r.height) });
+    }
+    try { adsBridge.postMessage({ action: "adSlots", slots: out }); } catch (e) {}
+  }
+  var adReportQueued = false;
+  function queueAdReport(){
+    if (adReportQueued) return;
+    adReportQueued = true;
+    requestAnimationFrame(function(){ adReportQueued = false; reportAdSlots(); });
+  }
+  function applyNativeAdCount(){
+    for (var i = adSlots.length - 1; i >= nativeAdsReady; i--) {
+      var s = adSlots[i];
+      if (s.parentNode) s.parentNode.removeChild(s);
+      adSlots.splice(i, 1);
+    }
+    for (var j = 0; j < adSlots.length; j++) adSlots[j].classList.add("live");
+  }
+  // Called BY the shell once native ad loading has finished.
+  window.onNativeAdsReady = function(count){
+    nativeAdsReady = count;
+    applyNativeAdCount();
+    reportAdSlots();
+  };
+  if (adsBridge) {
+    if (window.addEventListener) {
+      window.addEventListener("scroll", queueAdReport, { passive: true });
+      window.addEventListener("resize", queueAdReport);
+    }
+    // Catches layout shifts the scroll events miss (feed fetch landing,
+    // loader finishing, banner strip appearing).
+    (function adReportLoop(){
+      if (nativeAdsReady > 0) reportAdSlots();
+      setTimeout(adReportLoop, 800);
+    })();
+  }
+
   function fmtDate(iso){
     var d = new Date(iso.length === 10 ? iso + "T12:00:00" : iso);
     if (isNaN(d)) return iso;
@@ -663,7 +737,8 @@
   }
   function renderNews(items){
     newsList.innerHTML = "";
-    items.forEach(function(it){
+    adSlots = [];
+    items.forEach(function(it, idx){
       var a = document.createElement("a");
       a.className = "news-card"; a.href = it.url; a.target = "_blank"; a.rel = "noopener";
       var meta = document.createElement("div"); meta.className = "news-meta";
@@ -677,7 +752,16 @@
       var p = document.createElement("p"); p.textContent = it.summary || "";
       a.appendChild(meta); a.appendChild(h); a.appendChild(p);
       newsList.appendChild(a);
+      if ((idx + 1) % 5 === 0) {
+        var slot = document.createElement("div");
+        slot.className = "news-ad-slot";
+        slot.innerHTML = "<span>Advertisement</span>";
+        newsList.appendChild(slot);
+        adSlots.push(slot);
+      }
     });
+    if (nativeAdsReady >= 0) applyNativeAdCount();
+    reportAdSlots();
   }
   renderNews(FALLBACK_NEWS);
   newsNote.textContent = "Starter headlines \u2014 checking for the live feed\u2026";
