@@ -157,6 +157,21 @@
     margin-top:8px; font-size:11.5px; font-weight:800; letter-spacing:.22em;
     text-transform:uppercase; color:var(--muted2);
   }
+  .count-mode{
+    display:none; align-items:center; gap:12px; flex-wrap:wrap; margin-top:10px;
+  }
+  .count-mode.on{ display:flex }
+  .count-mode-title{
+    font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900;
+    text-transform:uppercase; letter-spacing:.06em; line-height:1;
+    font-size:clamp(22px,5vw,34px);
+    background:linear-gradient(90deg, var(--teal), var(--gold), var(--pink2));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .count-milestone{
+    font-size:11.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--gold); border:1px solid rgba(255,194,31,.5); border-radius:999px; padding:5px 12px;
+  }
   .count-meta{
     display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
     margin-top:16px; font-size:14.5px; font-weight:600; color:var(--muted);
@@ -319,6 +334,10 @@
   <!-- COUNTDOWN -->
   <main>
     <div class="count-wrap">
+      <div class="count-mode" id="countMode">
+        <span class="count-mode-title">Time Since Launch</span>
+        <span class="count-milestone" id="countMilestone"></span>
+      </div>
       <div class="count-grid" role="timer" aria-live="off">
         <div class="count-cell"><div class="count-num" id="cd-days">–</div><div class="count-lab">Days</div></div>
         <div class="count-cell"><div class="count-num" id="cd-hours">–</div><div class="count-lab">Hours</div></div>
@@ -326,9 +345,9 @@
         <div class="count-cell"><div class="count-num" id="cd-secs">–</div><div class="count-lab">Seconds</div></div>
       </div>
       <div class="count-meta">
-        <span><b id="cd-total">–</b> total hours left</span>
+        <span><b id="cd-total">–</b> <span id="cd-total-lab">total hours left</span></span>
         <div class="stretch">
-          <span class="stretch-lab">The final stretch — last 30 days</span>
+          <span class="stretch-lab" id="stretchLab">The final stretch — last 30 days</span>
           <div class="stretch-bar"><div class="stretch-fill" id="stretchFill"></div></div>
         </div>
       </div>
@@ -408,7 +427,9 @@
 
   var el = function(id){ return document.getElementById(id); };
   var dEl = el("cd-days"), hEl = el("cd-hours"), mEl = el("cd-mins"), sEl = el("cd-secs"),
-      totalEl = el("cd-total"), stretchEl = el("stretchFill"), bannerEl = el("launchBanner");
+      totalEl = el("cd-total"), stretchEl = el("stretchFill"), bannerEl = el("launchBanner"),
+      modeEl = el("countMode"), mileEl = el("countMilestone"),
+      totalLabEl = el("cd-total-lab"), stretchLabEl = el("stretchLab");
 
   function pad(n){ return (n < 10 ? "0" : "") + n; }
 
@@ -434,20 +455,58 @@
     setTimeout(function(){ box.innerHTML = ""; }, 6500);
   }
 
+  /* After the launch-night celebration window, the hero counter flips
+     from counting down to counting up: TIME SINCE LAUNCH. */
+  var CELEB_MS = 10 * 60 * 1000;
+  var countingUp = false;
+
+  function milestoneFor(days){
+    if (days >= 100) return "100 Days";
+    if (days >= 30) return "Month 1";
+    if (days >= 7) return "Week 1";
+    if (days >= 1) return "Day 1";
+    return "";
+  }
+
+  function enterCountUp(){
+    countingUp = true;
+    bannerEl.classList.remove("on");
+    modeEl.classList.add("on");
+    totalLabEl.textContent = "total hours since launch";
+    stretchLabEl.textContent = "Launch complete — the counter now runs up";
+  }
+
   function tick(){
     var now = Date.now();
     var diff = TARGET - now;
     if (diff <= 0) {
-      dEl.textContent = "00"; hEl.textContent = "00";
-      mEl.textContent = "00"; sEl.textContent = "00";
-      totalEl.textContent = "0";
-      stretchEl.style.width = "100%";
-      if (!launched) {
-        launched = true;
-        bannerEl.classList.add("on");
-        fireConfetti();
-        haptic("success");
+      var elapsed = now - TARGET;
+      if (elapsed < CELEB_MS) {
+        /* Zero moment: the launch-night celebration, unchanged. */
+        dEl.textContent = "00"; hEl.textContent = "00";
+        mEl.textContent = "00"; sEl.textContent = "00";
+        totalEl.textContent = "0";
+        stretchEl.style.width = "100%";
+        if (!launched) {
+          launched = true;
+          bannerEl.classList.add("on");
+          fireConfetti();
+          haptic("success");
+        }
+        return;
       }
+      if (!countingUp) enterCountUp();
+      var eSecs = Math.floor(elapsed / 1000);
+      var eDays = Math.floor(eSecs / 86400);
+      dEl.textContent = pad(eDays);
+      hEl.textContent = pad(Math.floor((eSecs % 86400) / 3600));
+      mEl.textContent = pad(Math.floor((eSecs % 3600) / 60));
+      sEl.textContent = pad(eSecs % 60);
+      totalEl.textContent = Math.floor(eSecs / 3600).toLocaleString("en-US");
+      stretchEl.style.width = "100%";
+      var ms = milestoneFor(eDays);
+      mileEl.textContent = ms ? "Milestone · " + ms : "";
+      mileEl.style.display = ms ? "" : "none";
       return;
     }
     var secs = Math.floor(diff / 1000);
