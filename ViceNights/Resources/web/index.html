@@ -212,6 +212,28 @@
   }
   .checklist li b{ color:#fff }
 
+  .news-list{ display:grid; gap:12px }
+  .news-card{
+    display:block; text-decoration:none; color:inherit;
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    border:1px solid var(--line); border-radius:18px; padding:18px;
+  }
+  .news-card:active{ transform:translateY(1px) }
+  .news-meta{ display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap }
+  .news-tag{
+    display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+    border-radius:999px; padding:4px 10px; border:1px solid rgba(255,255,255,.35); color:#fff;
+  }
+  .news-tag.official{ color:var(--teal); border-color:rgba(46,230,214,.4) }
+  .news-tag.news{ color:var(--pink2); border-color:rgba(255,46,136,.45) }
+  .news-tag.video{ color:var(--gold); border-color:rgba(255,194,31,.45) }
+  .news-tag.guides{ color:#c4a6ff; border-color:rgba(139,92,246,.5) }
+  .news-src{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+  .news-date{ font-size:12px; color:var(--muted2) }
+  .news-card h3{ margin:0 0 6px; font-size:19px; font-weight:800 }
+  .news-card p{ margin:0; color:var(--muted); font-size:14.5px }
+  .news-note{ margin-top:12px; font-size:12.5px; color:var(--muted2) }
+
   .actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:20px }
   .btn{
     appearance:none; border:0; cursor:pointer; text-decoration:none;
@@ -320,6 +342,13 @@
       </div>
       <p class="cal-note" id="calNote"></p>
     </div>
+
+    <!-- NEWS -->
+    <section class="section" id="newsSection">
+      <h2>Launch <span class="accent">News</span></h2>
+      <div class="news-list" id="newsList"></div>
+      <p class="news-note" id="newsNote">Loading the latest headlines\u2026</p>
+    </section>
 
     <!-- FACTS -->
     <section class="section">
@@ -505,6 +534,105 @@
   el("loaderShade").addEventListener("click", finishLoader);
   el("replayBtn").addEventListener("click", function(){ haptic("light"); runLoader(); });
   runLoader();
+
+  /* ---------- News feed ---------- */
+  var FEED_URL = "https://mzaras11-blip.github.io/gta6-news/feed.json";
+  var FALLBACK_NEWS = [
+  {
+    "date": "2026-11-09",
+    "source": "TimeSaver / IGN",
+    "summary": "Take-Two's November 9 results list GTA VI for November 19 on PS5 and Xbox Series X|S, and CEO Strauss Zelnick told IGN it is not going to be delayed again.",
+    "tag": "OFFICIAL",
+    "title": "Launch date locked: Thursday, November 19, 2026",
+    "url": "https://timesaver.gg/blog/gta-6-delay"
+  },
+  {
+    "date": "2026-11-10",
+    "source": "GTADB",
+    "summary": "Rockstar moved pre-load up to November 10 on PS5 and Xbox Series X|S. Boxed copies hold a download code (no disc) and reached stores November 12.",
+    "tag": "GUIDES",
+    "title": "Pre-load is live now — clear up to 212 GB",
+    "url": "https://gtadb.net/articles/gta-6-preload-november-10-2026-212-gb/"
+  },
+  {
+    "date": "2026-11-05",
+    "source": "GameMapa / Rockstar Newswire",
+    "summary": "The latest Rockstar Newswire post (November 5) opens a launch gallery of new screenshots from Vice City and beyond, two weeks out from release.",
+    "tag": "OFFICIAL",
+    "title": "Rockstar posts the GTA VI Launch Gallery",
+    "url": "https://gamemapa.com/en/gta-6/news/gta-6-explore-the-grand-theft-auto-vi-launch-gallery/"
+  },
+  {
+    "date": "2026-11-14",
+    "source": "CDKeyPrices News",
+    "summary": "Rockstar's Miami-flavoured Instagram campaign dropped a second in-game clip on November 14 — cars rounding a busy Vice City corner, days before launch.",
+    "tag": "VIDEO",
+    "title": "'Only in Dade' clips are real in-game footage",
+    "url": "https://mail.cdkeyprices.jp/news/gta-6-only-in-dade-videos-confirm-stunning-in-game-visuals"
+  },
+  {
+    "date": "2026-11-10",
+    "source": "Hypebeast",
+    "summary": "Rockstar and PlayStation announced a one-day launch festival on November 21 at Mana Wynwood, Miami, with artists from the game's soundtrack.",
+    "tag": "NEWS",
+    "title": "GTA VI: The Festival brings the launch party to Miami",
+    "url": "https://hypebeast.com/2026/11/rockstar-games-playstation-announce-grand-theft-auto-vi-festival-miami-cactus-jack-travis-scott-don-toliver-cardi-b-justice"
+  },
+  {
+    "date": "2026-11-11",
+    "source": "Geek Culture",
+    "summary": "Rockstar says the game is built to target 30 frames per second on PS5 and Xbox Series X|S while pushing visual density, with extra graphical improvements on PS5 Pro.",
+    "tag": "NEWS",
+    "title": "GTA VI targets 30 fps on consoles; PS5 Pro gets a ray-tracing bump",
+    "url": "https://geekculture.co/grand-theft-auto-vi-sets-30fps-cap-on-all-consoles/"
+  },
+  {
+    "date": "2026-06-25",
+    "source": "GTASix",
+    "summary": "Pre-orders opened June 25, 2026. Ultimate adds 16 in-game items over Standard, and every order placed before November 20 gets the Vintage Vice City Pack.",
+    "tag": "GUIDES",
+    "title": "Editions explained: Standard $79.99 vs Ultimate $99.99",
+    "url": "https://gtasix.org/en/guide/editions/"
+  }
+];
+  var newsList = el("newsList"), newsNote = el("newsNote");
+
+  function fmtDate(iso){
+    var d = new Date(iso.length === 10 ? iso + "T12:00:00" : iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  function renderNews(items){
+    newsList.innerHTML = "";
+    items.forEach(function(it){
+      var a = document.createElement("a");
+      a.className = "news-card"; a.href = it.url; a.target = "_blank"; a.rel = "noopener";
+      var meta = document.createElement("div"); meta.className = "news-meta";
+      var tag = document.createElement("span");
+      tag.className = "news-tag " + String(it.tag || "NEWS").toLowerCase();
+      tag.textContent = it.tag || "NEWS";
+      var src = document.createElement("span"); src.className = "news-src"; src.textContent = it.source || "";
+      var date = document.createElement("span"); date.className = "news-date"; date.textContent = fmtDate(it.date || "");
+      meta.appendChild(tag); meta.appendChild(src); meta.appendChild(date);
+      var h = document.createElement("h3"); h.textContent = it.title || "";
+      var p = document.createElement("p"); p.textContent = it.summary || "";
+      a.appendChild(meta); a.appendChild(h); a.appendChild(p);
+      newsList.appendChild(a);
+    });
+  }
+  renderNews(FALLBACK_NEWS);
+  newsNote.textContent = "Starter headlines \u2014 checking for the live feed\u2026";
+  try {
+    fetch(FEED_URL, { cache: "no-store" })
+      .then(function(r){ if (!r.ok) throw new Error("feed " + r.status); return r.json(); })
+      .then(function(data){
+        if (data && data.items && data.items.length) {
+          renderNews(data.items);
+          newsNote.textContent = "Live feed \u00b7 updated " + fmtDate(String(data.updated || "").slice(0, 10)) + " \u00b7 tap a card to read the original";
+        }
+      })
+      .catch(function(){ newsNote.textContent = "You\u2019re seeing starter headlines \u2014 the live feed needs a connection."; });
+  } catch (e) { newsNote.textContent = "You\u2019re seeing starter headlines \u2014 the live feed needs a connection."; }
 
   /* ---------- Add to calendar ---------- */
   var calBtn = el("calBtn"), calNote = el("calNote");

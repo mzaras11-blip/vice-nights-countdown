@@ -23,6 +23,7 @@ When the clock hits zero, it's launch night: the app celebrates with you.
 
 FEATURES
 • Live countdown to Thursday, November 19, 2026 — midnight Eastern
+• A launch news feed with the latest official posts, headlines and videos — tap any card to read the original story
 • Original neon sunset artwork — no screenshots, no clips, all original
 • One-tap "Add Launch Night to Calendar" so you never miss the moment
 • Launch night facts and a get-ready checklist (charge the controller, clear the schedule, stock the snacks)
@@ -38,4 +39,11 @@ countdown,timer,launch night,release date,midnight,neon,sunset,palms,hype,calend
 ## Support / Marketing Notes
 
 - Support URL: (set when the support page is published)
-- Privacy: the app collects no data, shows no ads, and makes no network calls. Calendar access is used only when the user taps "Add Launch Night to Calendar."
+- Privacy: the app collects no data and shows no ads. Its only network call fetches a public headlines file (no user data is sent). Calendar access is used only when the user taps "Add Launch Night to Calendar."
+
+## Screenshot Captions
+
+1. Loading show — "The night loads in neon" (original artwork slideshow)
+2. Main countdown — "Every second to launch night" (live days / hours / minutes / seconds)
+3. News feed — "Launch news, as it lands" (live headlines with sources — tap to read the original)
+4. Facts & checklist — "Be ready at midnight" (launch-night facts and get-ready checklist)
