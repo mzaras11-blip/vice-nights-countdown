@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:," />
+<title>GTA6 Launch Countdown</title>
+<style>
+  :root{
+    --bg:#0d0618;
+    --bg2:#170a2a;
+    --panel:#1c0f33;
+    --panel2:#241344;
+    --line:rgba(255,255,255,.12);
+    --text:#fff7ed;
+    --muted:#d8c8e8;
+    --muted2:#a995c2;
+    --pink:#ff2e88;
+    --pink2:#ff5da2;
+    --orange:#ff7a18;
+    --gold:#ffc21f;
+    --teal:#2ee6d6;
+    --purple:#8b5cf6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  button, a.btn{ min-height:44px; }
+  img{max-width:100%; display:block}
+  a{color:var(--teal)}
+  body.loading{ overflow:hidden }
+
+  /* ---------- LOADING SCREEN — original artwork slides ---------- */
+  .loader{
+    position:fixed; inset:0; z-index:1000; background:#000; color:#fff;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    animation:loaderKill .7s ease 14s forwards;
+  }
+  .loader.done{ opacity:0; pointer-events:none; transition:opacity .7s ease; animation:none }
+  @keyframes loaderKill{ to{ opacity:0; visibility:hidden } }
+  .loader-slides{ position:absolute; inset:0; overflow:hidden }
+  .loader-slide{
+    position:absolute; inset:0; opacity:0; transition:opacity .9s ease;
+  }
+  .loader-slide.active{ opacity:1 }
+  .loader-slide img{
+    width:100%; height:100%; object-fit:cover;
+  }
+  .loader-slide.active img{ animation:kenburns 2.4s ease-out forwards }
+  @keyframes kenburns{ from{ transform:scale(1) } to{ transform:scale(1.07) } }
+  @media (prefers-reduced-motion: reduce){
+    .loader-slide.active img{ animation:none }
+  }
+  .loader-shade{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.42) 0%, transparent 30%, transparent 52%, rgba(0,0,0,.82) 100%);
+  }
+  .loader-top{
+    position:absolute; top:0; left:0; right:0; z-index:3;
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    padding:calc(18px + env(safe-area-inset-top)) 22px 18px;
+  }
+  .loader-brand{
+    font-size:11.5px; font-weight:800; letter-spacing:.18em; text-transform:uppercase;
+    background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:8px 13px;
+    backdrop-filter:blur(6px);
+  }
+  .loader-count{ font-size:12px; font-weight:800; letter-spacing:.14em; color:rgba(255,255,255,.85); font-variant-numeric:tabular-nums }
+  .loader-ui{ position:relative; z-index:2; padding:0 22px calc(26px + env(safe-area-inset-bottom)); max-width:1120px; width:100%; margin:0 auto }
+  .loader-kicker{ font-family:"Yellowtail","Snell Roundhand",cursive; font-size:clamp(26px,4.5vw,40px); color:#fff; text-shadow:0 0 18px rgba(255,46,136,.8); margin:0 0 2px; line-height:1 }
+  .loader-place{
+    font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900; text-transform:uppercase; line-height:.95;
+    font-size:clamp(34px,7vw,64px); margin:0; text-shadow:0 4px 24px rgba(0,0,0,.7);
+  }
+  .loader-tip{ margin:10px 0 0; font-size:15px; font-weight:600; color:#ffeedd; text-shadow:0 2px 10px rgba(0,0,0,.8); max-width:560px; min-height:24px }
+  .loader-bar-row{ display:flex; align-items:center; gap:14px; margin-top:18px }
+  .loader-bar{ flex:1; height:8px; border-radius:999px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.22); overflow:hidden }
+  .loader-bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--pink), var(--orange), var(--gold)); border-radius:999px }
+  .loader-pct{ font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900; font-size:20px; min-width:64px; text-align:right; font-variant-numeric:tabular-nums }
+  .loader-foot{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:14px }
+  .loader-status{ font-size:11.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.75) }
+  .loader-dots{ display:flex; gap:7px }
+  .loader-dot{ width:26px; height:4px; border-radius:999px; background:rgba(255,255,255,.28) }
+  .loader-dot.on{ background:#fff }
+  .loader-skip{
+    background:rgba(0,0,0,.55); color:#fff; border:1px solid rgba(255,255,255,.35); backdrop-filter:blur(6px);
+    border-radius:999px; padding:10px 18px; font-family:inherit; font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; cursor:pointer;
+  }
+  .loader-skip:hover{ background:rgba(255,255,255,.14) }
+  @media (max-width:640px){
+    .loader-top{ padding-left:16px; padding-right:16px }
+    .loader-ui{ padding-left:16px; padding-right:16px }
+    .loader-brand{ font-size:10.5px }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{ position:relative; isolation:isolate; overflow:hidden }
+  .hero-img{
+    position:absolute; inset:0; z-index:-2;
+    width:100%; height:100%; object-fit:cover; object-position:center 38%;
+  }
+  .hero-shade{
+    position:absolute; inset:0; z-index:-1;
+    background:
+      linear-gradient(180deg, rgba(13,6,24,.22) 0%, rgba(13,6,24,.08) 34%, rgba(13,6,24,.74) 72%, var(--bg) 100%),
+      linear-gradient(90deg, rgba(13,6,24,.35), transparent 55%);
+  }
+  .hero-inner{
+    max-width:1120px; margin:0 auto;
+    padding:calc(64px + env(safe-area-inset-top)) 22px 30px;
+  }
+  .kicker{
+    font-family:"Yellowtail","Snell Roundhand",cursive;
+    font-size:clamp(28px,5vw,44px); line-height:1; margin:0 0 6px;
+    color:#fff; text-shadow:0 0 22px rgba(255,46,136,.85);
+  }
+  h1.title{
+    font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900;
+    text-transform:uppercase; line-height:.92; margin:0;
+    font-size:clamp(44px,11.5vw,110px); letter-spacing:.01em;
+    background:linear-gradient(180deg,#fff7ed 20%, var(--gold) 55%, var(--orange) 78%, var(--pink) 105%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 6px 26px rgba(0,0,0,.55));
+  }
+  .subtitle{
+    margin:14px 0 0; font-size:clamp(16px,2.6vw,21px); font-weight:600; color:var(--muted);
+    max-width:620px; text-shadow:0 2px 12px rgba(0,0,0,.7);
+  }
+  .subtitle strong{ color:#fff }
+
+  /* ---------- COUNTDOWN ---------- */
+  .count-wrap{ max-width:1120px; margin:0 auto; padding:6px 22px 0 }
+  .count-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px;
+  }
+  .count-cell{
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    border:1px solid var(--line); border-radius:20px;
+    padding:20px 8px 16px; text-align:center;
+    box-shadow:0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .count-num{
+    font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900;
+    font-size:clamp(38px,10vw,76px); line-height:1; font-variant-numeric:tabular-nums;
+    background:linear-gradient(180deg,#fff, #ffd9ec 60%, var(--pink2));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .count-lab{
+    margin-top:8px; font-size:11.5px; font-weight:800; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--muted2);
+  }
+  .count-meta{
+    display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+    margin-top:16px; font-size:14.5px; font-weight:600; color:var(--muted);
+  }
+  .count-meta b{ color:#fff; font-variant-numeric:tabular-nums }
+  .stretch{ flex:1 1 220px; min-width:200px }
+  .stretch-bar{ height:8px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; margin-top:6px }
+  .stretch-fill{ height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg, var(--teal), var(--pink), var(--orange)) }
+  .stretch-lab{ font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--muted2) }
+
+  .launch-banner{
+    display:none; margin-top:20px; text-align:center;
+    background:linear-gradient(90deg, rgba(255,46,136,.22), rgba(255,122,24,.22), rgba(46,230,214,.22));
+    border:1px solid rgba(255,255,255,.25); border-radius:20px; padding:26px 16px;
+  }
+  .launch-banner.on{ display:block }
+  .launch-banner .big{
+    font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900; text-transform:uppercase;
+    font-size:clamp(30px,7.5vw,58px); line-height:1;
+    background:linear-gradient(90deg, var(--gold), var(--pink2), var(--teal));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .launch-banner p{ margin:8px 0 0; font-weight:600; color:var(--muted) }
+
+  /* ---------- SECTIONS ---------- */
+  .section{ max-width:1120px; margin:0 auto; padding:34px 22px 0 }
+  .section h2{
+    font-family:"Archivo Black","Arial Black",sans-serif; font-weight:900; text-transform:uppercase;
+    font-size:clamp(22px,4.5vw,32px); margin:0 0 14px; line-height:1.05;
+  }
+  .section h2 .accent{ color:var(--pink2) }
+  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px }
+  .card{
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    border:1px solid var(--line); border-radius:18px; padding:18px;
+  }
+  .card .tag{
+    display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--teal); border:1px solid rgba(46,230,214,.4); border-radius:999px; padding:4px 10px; margin-bottom:10px;
+  }
+  .card h3{ margin:0 0 6px; font-size:19px; font-weight:800 }
+  .card p{ margin:0; color:var(--muted); font-size:14.5px }
+  .checklist{ list-style:none; margin:0; padding:0; display:grid; gap:10px }
+  .checklist li{
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    border:1px solid var(--line); border-radius:14px; padding:13px 16px;
+    font-weight:600; color:var(--muted); display:flex; gap:12px; align-items:center;
+  }
+  .checklist li::before{
+    content:""; flex:0 0 auto; width:12px; height:12px; border-radius:50%;
+    background:linear-gradient(135deg, var(--pink), var(--orange));
+    box-shadow:0 0 12px rgba(255,46,136,.7);
+  }
+  .checklist li b{ color:#fff }
+
+  .actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:20px }
+  .btn{
+    appearance:none; border:0; cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:inherit; font-size:15px; font-weight:800; letter-spacing:.04em;
+    color:#1c0f33; background:linear-gradient(90deg, var(--gold), var(--orange));
+    border-radius:999px; padding:13px 24px;
+    box-shadow:0 10px 30px rgba(255,122,24,.35);
+  }
+  .btn.ghost{
+    background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.3);
+    box-shadow:none;
+  }
+  .btn:active{ transform:translateY(1px) }
+  .cal-note{ margin-top:10px; font-size:13.5px; font-weight:600; color:var(--teal); min-height:20px }
+
+  footer{
+    max-width:1120px; margin:0 auto; padding:40px 22px calc(34px + env(safe-area-inset-bottom));
+    color:var(--muted2); font-size:12.5px;
+  }
+  .confetti{ position:fixed; inset:0; pointer-events:none; z-index:900; overflow:hidden }
+  .confetti i{
+    position:absolute; top:-4vh; width:9px; height:15px; border-radius:2px; opacity:0;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    0%{ opacity:1; transform:translateY(0) rotate(0deg) }
+    100%{ opacity:.9; transform:translateY(110vh) rotate(680deg) }
+  }
+  @media (max-width:640px){
+    .hero-inner{ padding-left:16px; padding-right:16px }
+    .count-wrap,.section,footer{ padding-left:16px; padding-right:16px }
+    .count-grid{ gap:8px }
+    .count-cell{ border-radius:16px; padding:16px 4px 13px }
+  }
+</style>
+</head>
+<body class="loading">
+
+  <!-- LOADING SCREEN — original neon artwork, generated for this app -->
+  <div class="loader" id="loader" role="dialog" aria-label="Loading">
+    <div class="loader-slides" id="loaderSlides">
+      <div class="loader-slide"><img src="assets/slide-harbor.jpg" alt="" /></div>
+      <div class="loader-slide"><img src="assets/slide-strip.jpg" alt="" /></div>
+      <div class="loader-slide"><img src="assets/slide-skyline.jpg" alt="" /></div>
+      <div class="loader-slide"><img src="assets/slide-harbor.jpg" alt="" /></div>
+      <div class="loader-slide"><img src="assets/slide-strip.jpg" alt="" /></div>
+      <div class="loader-slide"><img src="assets/slide-skyline.jpg" alt="" /></div>
+    </div>
+    <div class="loader-shade" id="loaderShade"></div>
+    <div class="loader-top">
+      <span class="loader-brand">GTA6 Launch Countdown</span>
+      <span class="loader-count" id="loaderCount">1 / 6</span>
+    </div>
+    <div class="loader-ui">
+      <p class="loader-kicker">the wait is almost over</p>
+      <h2 class="loader-place" id="loaderPlace">The Harbor at Dusk</h2>
+      <p class="loader-tip" id="loaderTip">Golden hour over the bay — launch night is close.</p>
+      <div class="loader-bar-row">
+        <div class="loader-bar"><div class="loader-bar-fill" id="loaderFill"></div></div>
+        <div class="loader-pct" id="loaderPct">0%</div>
+      </div>
+      <div class="loader-foot">
+        <span class="loader-status">Loading the night</span>
+        <div class="loader-dots" id="loaderDots"></div>
+        <button class="loader-skip" id="loaderSkip" type="button">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <img class="hero-img" src="assets/hero.jpg" alt="" />
+    <div class="hero-shade"></div>
+    <div class="hero-inner">
+      <p class="kicker">the wait is almost over</p>
+      <h1 class="title">GTA6 Launch<br />Countdown</h1>
+      <p class="subtitle">Counting down to <strong>the biggest launch night of the year</strong> —
+        Thursday, November 19, 2026, at midnight Eastern.</p>
+    </div>
+  </header>
+
+  <!-- COUNTDOWN -->
+  <main>
+    <div class="count-wrap">
+      <div class="count-grid" role="timer" aria-live="off">
+        <div class="count-cell"><div class="count-num" id="cd-days">–</div><div class="count-lab">Days</div></div>
+        <div class="count-cell"><div class="count-num" id="cd-hours">–</div><div class="count-lab">Hours</div></div>
+        <div class="count-cell"><div class="count-num" id="cd-mins">–</div><div class="count-lab">Minutes</div></div>
+        <div class="count-cell"><div class="count-num" id="cd-secs">–</div><div class="count-lab">Seconds</div></div>
+      </div>
+      <div class="count-meta">
+        <span><b id="cd-total">–</b> total hours left</span>
+        <div class="stretch">
+          <span class="stretch-lab">The final stretch — last 30 days</span>
+          <div class="stretch-bar"><div class="stretch-fill" id="stretchFill"></div></div>
+        </div>
+      </div>
+      <div class="launch-banner" id="launchBanner">
+        <div class="big">It&rsquo;s Launch Night</div>
+        <p>The wait is over. The biggest launch night of the year is here — see you out there.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" id="calBtn" type="button">Add Launch Night to Calendar</button>
+        <button class="btn ghost" id="replayBtn" type="button">Replay Loading Screen</button>
+      </div>
+      <p class="cal-note" id="calNote"></p>
+    </div>
+
+    <!-- FACTS -->
+    <section class="section">
+      <h2>Launch Night <span class="accent">Facts</span></h2>
+      <div class="cards">
+        <div class="card">
+          <span class="tag">The Date</span>
+          <h3>Thursday, November 19, 2026</h3>
+          <p>Launch night lands on a Thursday. Clear the evening, clear the next morning — you know the drill.</p>
+        </div>
+        <div class="card">
+          <span class="tag">The Moment</span>
+          <h3>Midnight Eastern</h3>
+          <p>The countdown hits zero at 12:00 AM Eastern — 9:00 PM Wednesday on the West Coast, 5:00 AM in London.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Be Ready</span>
+          <h3>Download Early</h3>
+          <p>Big launches open their downloads ahead of time. Grab the files early so midnight is playtime, not a progress bar.</p>
+        </div>
+        <div class="card">
+          <span class="tag">The Vibe</span>
+          <h3>One Night Only</h3>
+          <p>A launch night like this only happens once. First hours, first drives, first chaos — be there when the lights come on.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHECKLIST -->
+    <section class="section">
+      <h2>Launch Night <span class="accent">Checklist</span></h2>
+      <ul class="checklist">
+        <li><span><b>Charge everything</b> — controller, headset, phone. No dead batteries at midnight.</span></li>
+        <li><span><b>Clear the schedule</b> — Thursday night and Friday morning are spoken for.</span></li>
+        <li><span><b>Stock the snacks</b> — drinks cold, food handled before the clock hits zero.</span></li>
+        <li><span><b>Rally the crew</b> — get the group chat loud so everyone rolls in at the same time.</span></li>
+        <li><span><b>Set the alarm</b> — add launch night to your calendar below and let the countdown do the rest.</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    GTA6 Launch Countdown is an unofficial, fan-made countdown timer. It is not affiliated with,
+    endorsed by, or connected to any game publisher or developer. All artwork is original.
+  </footer>
+
+  <div class="confetti" id="confetti"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Countdown ---------- */
+  var TARGET = Date.parse("2026-11-19T00:00:00-05:00");
+  var STRETCH_START = TARGET - 30 * 24 * 3600 * 1000;
+  var launched = false;
+
+  var el = function(id){ return document.getElementById(id); };
+  var dEl = el("cd-days"), hEl = el("cd-hours"), mEl = el("cd-mins"), sEl = el("cd-secs"),
+      totalEl = el("cd-total"), stretchEl = el("stretchFill"), bannerEl = el("launchBanner");
+
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+
+  function haptic(style){
+    try {
+      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.haptics) {
+        window.webkit.messageHandlers.haptics.postMessage(style);
+      }
+    } catch (e) { /* web fallback: no haptics */ }
+  }
+
+  function fireConfetti(){
+    var box = el("confetti");
+    var colors = ["#ff2e88","#ff7a18","#ffc21f","#2ee6d6","#8b5cf6","#fff7ed"];
+    for (var i = 0; i < 90; i++) {
+      var piece = document.createElement("i");
+      piece.style.left = (Math.random() * 100) + "vw";
+      piece.style.background = colors[i % colors.length];
+      piece.style.animationDuration = (2.4 + Math.random() * 2.6) + "s";
+      piece.style.animationDelay = (Math.random() * 0.9) + "s";
+      box.appendChild(piece);
+    }
+    setTimeout(function(){ box.innerHTML = ""; }, 6500);
+  }
+
+  function tick(){
+    var now = Date.now();
+    var diff = TARGET - now;
+    if (diff <= 0) {
+      dEl.textContent = "00"; hEl.textContent = "00";
+      mEl.textContent = "00"; sEl.textContent = "00";
+      totalEl.textContent = "0";
+      stretchEl.style.width = "100%";
+      if (!launched) {
+        launched = true;
+        bannerEl.classList.add("on");
+        fireConfetti();
+        haptic("success");
+      }
+      return;
+    }
+    var secs = Math.floor(diff / 1000);
+    var days = Math.floor(secs / 86400);
+    var hours = Math.floor((secs % 86400) / 3600);
+    var mins = Math.floor((secs % 3600) / 60);
+    var s = secs % 60;
+    dEl.textContent = pad(days);
+    hEl.textContent = pad(hours);
+    mEl.textContent = pad(mins);
+    sEl.textContent = pad(s);
+    totalEl.textContent = Math.floor(secs / 3600).toLocaleString("en-US");
+    var pct = Math.min(100, Math.max(0, (now - STRETCH_START) / (TARGET - STRETCH_START) * 100));
+    stretchEl.style.width = pct.toFixed(1) + "%";
+  }
+  tick();
+  setInterval(tick, 250);
+
+  /* ---------- Loading screen ---------- */
+  var SLIDES = [
+    { place: "The Harbor at Dusk",    tip: "Golden hour over the bay — launch night is close." },
+    { place: "The Neon Strip",        tip: "The strip lights up first. Then everything else." },
+    { place: "Downtown After Dark",   tip: "The city never sleeps — and on launch night, neither do we." },
+    { place: "Golden Hour on the Bay", tip: "Charge the controller. Clear the schedule." },
+    { place: "Palms & Neon",          tip: "Almost there — the final stretch is on the clock above." },
+    { place: "The City Wakes Up",     tip: "One more sunset, then it's launch night." }
+  ];
+  var SLIDE_MS = 1500;
+  var loader = el("loader"), slides = loader.querySelectorAll(".loader-slide"),
+      dotsBox = el("loaderDots"), fill = el("loaderFill"), pctEl = el("loaderPct"),
+      placeEl = el("loaderPlace"), tipEl = el("loaderTip"), countEl = el("loaderCount");
+  var loaderTimer = null, loaderStart = 0, loaderDone = false;
+
+  for (var d = 0; d < slides.length; d++) {
+    var dot = document.createElement("span");
+    dot.className = "loader-dot";
+    dotsBox.appendChild(dot);
+  }
+  var dots = dotsBox.querySelectorAll(".loader-dot");
+
+  function showSlide(i){
+    for (var k = 0; k < slides.length; k++) {
+      slides[k].classList.toggle("active", k === i);
+      dots[k].classList.toggle("on", k <= i);
+    }
+    placeEl.textContent = SLIDES[i].place;
+    tipEl.textContent = SLIDES[i].tip;
+    countEl.textContent = (i + 1) + " / " + slides.length;
+  }
+
+  function finishLoader(){
+    if (loaderDone) return;
+    loaderDone = true;
+    if (loaderTimer) { cancelAnimationFrame(loaderTimer); loaderTimer = null; }
+    loader.classList.add("done");
+    document.body.classList.remove("loading");
+    setTimeout(function(){ loader.style.display = "none"; }, 800);
+  }
+
+  function runLoader(){
+    loaderDone = false;
+    loader.style.display = "";
+    loader.classList.remove("done");
+    document.body.classList.add("loading");
+    showSlide(0);
+    loaderStart = performance.now();
+    var total = SLIDE_MS * slides.length;
+    function frame(now){
+      if (loaderDone) return;
+      var t = now - loaderStart;
+      if (t >= total) { finishLoader(); return; }
+      showSlide(Math.floor(t / SLIDE_MS));
+      var pct = Math.floor(t / total * 100);
+      fill.style.width = pct + "%";
+      pctEl.textContent = pct + "%";
+      loaderTimer = requestAnimationFrame(frame);
+    }
+    loaderTimer = requestAnimationFrame(frame);
+    /* Hard stop: the loader can never trap the page. */
+    setTimeout(finishLoader, total + 2500);
+  }
+
+  el("loaderSkip").addEventListener("click", function(){ haptic("selection"); finishLoader(); });
+  el("loaderShade").addEventListener("click", finishLoader);
+  el("replayBtn").addEventListener("click", function(){ haptic("light"); runLoader(); });
+  runLoader();
+
+  /* ---------- Add to calendar ---------- */
+  var calBtn = el("calBtn"), calNote = el("calNote");
+
+  function icsDownload(){
+    var ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//GTA6 Launch Countdown//Launch Night//EN",
+      "BEGIN:VEVENT",
+      "UID:launch-night-20261119@gta6launchcountdown",
+      "DTSTAMP:20261101T000000Z",
+      "DTSTART:20261119T050000Z",
+      "DTEND:20261119T060000Z",
+      "SUMMARY:Launch Night",
+      "DESCRIPTION:The biggest launch night of the year. Midnight Eastern — be ready.",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+    var blob = new Blob([ics], { type: "text/calendar" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "launch-night.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    calNote.textContent = "Calendar file downloaded — open it to add launch night.";
+  }
+
+  window.onCalendarResult = function(result){
+    if (result === "added") {
+      calNote.textContent = "Added — launch night is on your calendar.";
+      haptic("success");
+    } else if (result === "denied") {
+      calNote.textContent = "Calendar access was off, so here's the file instead.";
+      icsDownload();
+    } else {
+      calNote.textContent = "That didn't go through — try the calendar file instead.";
+      icsDownload();
+    }
+  };
+
+  calBtn.addEventListener("click", function(){
+    haptic("light");
+    try {
+      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.calendar) {
+        window.webkit.messageHandlers.calendar.postMessage({ action: "addLaunch" });
+        return;
+      }
+    } catch (e) { /* fall through to the .ics download */ }
+    icsDownload();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+# codemagic.yaml — GTA6 Launch Countdown
+#
+# HOW TO USE:
+#  1. Drop this file in the repository root, next to ViceNights.xcodeproj
+#  2. Push the project to GitHub
+#  3. On codemagic.io, add the GitHub repo as an application — this file is
+#     picked up automatically and configures the build.
+#  4. In Codemagic, create the environment variable groups described below
+#     (Application settings → Environment variables).
+#  5. Enroll in the Apple Developer Program ($99/yr) and create the app
+#     record in App Store Connect with bundle ID com.swishgame.vicenights.
+#
+# Based on Codemagic's official automatic code signing sample.
+#
+#  6. Want a demo without Apple enrollment? Run the "iOS Unsigned (demo)"
+#     workflow — it builds an unsigned .ipa you can sideload with a free
+#     Apple ID (Sideloadly/AltStore). No signing groups needed for it.
+
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      # App Store Connect API key stored in Codemagic Team integrations
+      # (key name "Codemagic access", added 2026-10-19).
+      app_store_connect: swish-asc-key
+    environment:
+      groups:
+        # Holds CERTIFICATE_PRIVATE_KEY (RSA key generated 2026-10-19) —
+        # fetch-signing-files --create cannot save Apple's certificate
+        # without it.
+        - certificate_credentials
+      # NOTE: no ios_signing block here on purpose — declaring it makes
+      # Codemagic demand an existing provisioning profile before the build
+      # starts. The scripts below create the signing files at runtime with
+      # fetch-signing-files --create.
+      vars:
+        XCODE_PROJECT: "ViceNights.xcodeproj"
+        XCODE_SCHEME: "ViceNights"
+        BUNDLE_ID: "com.swishgame.vicenights"
+      xcode: latest
+    scripts:
+      - name: Set up keychain for code signing
+        script: keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Add certificates to keychain
+        script: keychain add-certificates
+      - name: Set up code signing on Xcode project
+        script: xcode-project use-profiles
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Builds go straight to TestFlight (app record must exist in
+        # App Store Connect for bundle ID com.swishgame.vicenights).
+        submit_to_testflight: true
+
+  ios-unsigned:
+    name: iOS Unsigned (demo)
+    # Demo build: no Apple Developer enrollment, no signing files, no
+    # App Store Connect. Produces an unsigned .ipa for sideloading with a
+    # free Apple ID (Sideloadly / AltStore). Also the first real compile
+    # check of the Swift sources.
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      vars:
+        XCODE_PROJECT: "ViceNights.xcodeproj"
+        XCODE_SCHEME: "ViceNights"
+      xcode: latest
+    scripts:
+      - name: Build unsigned .app for iOS device
+        script: |
+          xcodebuild -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+      - name: Package unsigned .ipa
+        script: |
+          rm -rf Payload ViceNights-unsigned.ipa
+          mkdir -p Payload
+          cp -R "build/Build/Products/Release-iphoneos/ViceNights.app" Payload/
+          zip -r ViceNights-unsigned.ipa Payload
+    artifacts:
+      - ViceNights-unsigned.ipa

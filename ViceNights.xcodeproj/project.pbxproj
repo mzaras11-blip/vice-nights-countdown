@@ -1,0 +1,203 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+		VN01B00000000000000000A1 /* ViceNightsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A1 /* ViceNightsApp.swift */; };
+		VN01B00000000000000000A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A2 /* Assets.xcassets */; };
+		VN01B00000000000000000A3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A3 /* PrivacyInfo.xcprivacy */; };
+		VN01B00000000000000000A4 /* web in Resources */ = {isa = PBXBuildFile; fileRef = VN01F00000000000000000A4 /* web */; };
+		VN01F00000000000000000A0 /* ViceNights.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViceNights.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		VN01F00000000000000000A1 /* ViceNightsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViceNightsApp.swift; sourceTree = "<group>"; };
+		VN01F00000000000000000A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		VN01F00000000000000000A3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		VN01F00000000000000000A4 /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/web; sourceTree = "<group>"; };
+		VN01F00000000000000000A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		VN01P00000000000000000A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				VN01B00000000000000000A1 /* ViceNightsApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		VN01P00000000000000000A2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				VN01B00000000000000000A2 /* Assets.xcassets in Resources */,
+				VN01B00000000000000000A3 /* PrivacyInfo.xcprivacy in Resources */,
+				VN01B00000000000000000A4 /* web in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		VN01P00000000000000000A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		VN01G00000000000000000A0 = {
+			isa = PBXGroup;
+			children = (
+				VN01G00000000000000000A1 /* ViceNights */,
+				VN01G00000000000000000A2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		VN01G00000000000000000A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				VN01F00000000000000000A0 /* ViceNights.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		VN01G00000000000000000A1 /* ViceNights */ = {
+			isa = PBXGroup;
+			children = (
+				VN01F00000000000000000A1 /* ViceNightsApp.swift */,
+				VN01F00000000000000000A5 /* Info.plist */,
+				VN01F00000000000000000A2 /* Assets.xcassets */,
+				VN01F00000000000000000A3 /* PrivacyInfo.xcprivacy */,
+				VN01F00000000000000000A4 /* web */,
+			);
+			path = ViceNights;
+			sourceTree = "<group>";
+		};
+		VN01T00000000000000000A1 /* ViceNights */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = VN01L00000000000000000A2 /* Build configuration list for PBXNativeTarget "ViceNights" */;
+			buildPhases = (
+				VN01P00000000000000000A1 /* Sources */,
+				VN01P00000000000000000A3 /* Frameworks */,
+				VN01P00000000000000000A2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViceNights;
+			productName = ViceNights;
+			productReference = VN01F00000000000000000A0 /* ViceNights.app */;
+			productType = "com.apple.product-type.application";
+		};
+		VN01J00000000000000000A1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = VN01L00000000000000000A1 /* Build configuration list for PBXProject */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en);
+			mainGroup = VN01G00000000000000000A0;
+			productRefGroup = VN01G00000000000000000A2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				VN01T00000000000000000A1 /* ViceNights */,
+			);
+		};
+		VN01L00000000000000000A1 /* Build configuration list for PBXProject */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				VN01C00000000000000000A1 /* Debug */,
+				VN01C00000000000000000A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		VN01L00000000000000000A2 /* Build configuration list for PBXNativeTarget "ViceNights" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				VN01C00000000000000000B1 /* Debug */,
+				VN01C00000000000000000B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		VN01C00000000000000000A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		VN01C00000000000000000A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		VN01C00000000000000000B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = ViceNights/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.swishgame.vicenights;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Debug;
+		};
+		VN01C00000000000000000B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = ViceNights/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.swishgame.vicenights;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Release;
+		};
+	};
+	rootObject = VN01J00000000000000000A1 /* Project object */;
+}
