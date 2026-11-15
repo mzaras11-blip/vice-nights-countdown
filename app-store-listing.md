@@ -1,9 +1,9 @@
-# GTA6 Launch Countdown — App Store Listing Copy
+# GTA6 News — App Store Listing Copy
 
-- **Name:** GTA6 Launch Countdown
+- **Name:** GTA6 News
 - **Subtitle:** Launch Night Timer
 - **Bundle ID:** com.swishgame.vicenights
-- **Version:** 1.0 (build 1)
+- **Version:** 1.0 (build 2)
 - **Primary category:** Entertainment
 - **Secondary category:** Utilities
 
@@ -15,7 +15,7 @@ The biggest launch night of the year is almost here. Watch every day, hour, minu
 
 The wait is almost over.
 
-GTA6 Launch Countdown is a fan-made timer counting down to the biggest launch night of the year: Thursday, November 19, 2026, at midnight Eastern.
+GTA6 News is a fan-made timer counting down to the biggest launch night of the year: Thursday, November 19, 2026, at midnight Eastern.
 
 Open the app and ride through a neon-soaked loading show — original sunset artwork, palm silhouettes and harbor lights — then watch the big clock tick down live: days, hours, minutes and seconds, plus your total hours left and a "final stretch" meter for the last 30 days.
 
@@ -29,7 +29,7 @@ FEATURES
 • A launch-night celebration the second the timer hits zero
 • Works fully offline — the whole show is built into the app
 
-GTA6 Launch Countdown is an unofficial, fan-made app. It is not affiliated with, endorsed by, or connected to any game publisher or developer.
+GTA6 News is an unofficial, fan-made app. It is not affiliated with, endorsed by, or connected to any game publisher or developer.
 
 ## Keywords
 
